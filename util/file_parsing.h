@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <iostream>
 
 // read a whole file into a plain string, newlines and all
 std::string read_file(const std::string& filename);
@@ -22,6 +23,17 @@ std::vector<T> convert_lines(const std::vector<std::string>& s, const std::funct
     std::vector<T> converted;
     for (const auto& line : s) converted.emplace_back(c(line));
     return converted;
+}
+
+
+
+template<class e, class t>
+std::basic_istream<e,t>& operator >>(std::basic_istream<e,t>& in, const e& cliteral)
+{
+    e buffer(0);
+    in >> buffer;
+    if (buffer != cliteral) in.setstate(std::ios::failbit);
+    return in;
 }
 
 #endif //AOC2018_FILE_PARSING_H
