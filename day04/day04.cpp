@@ -188,7 +188,7 @@ int main()
     assert(!lines.empty() > 0);
 
     event_line_parser p;
-    auto events = convert_lines<struct event>(lines, p);
+    auto events = convert_strings<struct event>(lines, p);
     std::sort(events.begin(), events.end(), time_compare_events());
 
     auto result = day04_solve_part1_and_2(events);

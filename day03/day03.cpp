@@ -103,7 +103,7 @@ int main()
     auto lines = parse_lines(file_text);
     assert(!lines.empty() > 0);
 
-    auto claims = convert_lines<struct claim>(lines, parse_claim);
+    auto claims = convert_strings<struct claim>(lines, parse_claim);
 
     auto result = day03_solve_part1_and_2(claims);
     std::cout << result.first << std::endl;

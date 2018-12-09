@@ -33,9 +33,10 @@ int main()
     assert(!file_text.empty());
 
     auto lines = parse_lines(file_text);
-    assert(!lines.empty() > 0);
+    assert(!lines.empty());
 
-    std::vector<int> numbers = convert_lines<int>(lines, [](const std::string& s) -> int { return std::stoi(s); });
+    std::vector<int> numbers = convert_strings<int>(lines, [](const std::string &s) -> int
+    { return std::stoi(s); });
 
     std::cout << day01_solve_part1(numbers) << std::endl;
     std::cout << day01_solve_part2(numbers) << std::endl;
