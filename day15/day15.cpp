@@ -6,49 +6,33 @@
 #include <vector>
 
 #include "../util/file_parsing.h"
+#include "../util/grid.h"
 
-struct Point
+
+
+// compare points in reading order
+bool operator<(const Point& a, const Point& o)
 {
-    int x;
-    int y;
+    if (a.y != o.y) return a.y < o.y;
+    return a.x < o.x;
+}
 
-    Point() : x(0), y(0) {}
-    explicit Point(int ax, int ay) : x(ax), y(ay) {}
+bool operator>(const Point& a, const Point& o)
+{
+    if (a.y != o.y) return a.y > o.y;
+    return a.x > o.x;
+}
 
-    Point(const Point&) = default;
-    Point(Point&&) = default;
+bool operator==(const Point& a, const Point& o)
+{
+    return (a.y == o.y && a.x==o.x);
+}
 
-    Point& operator=(const Point&) = default;
-    Point& operator=(Point&&) = default;
+bool operator!=(const Point& a, const Point& o)
+{
+    return (a.y != o.y || a.x != o.x);
+}
 
-    // compare points in reading order
-    bool operator<(const Point& o) const
-    {
-        if (y != o.y) return y < o.y;
-        return x < o.x;
-    }
-
-    bool operator>(const Point& o) const
-    {
-        if (y != o.y) return y > o.y;
-        return x > o.x;
-    }
-
-    bool operator==(const Point& o) const
-    {
-        return (y == o.y && x==o.x);
-    }
-
-    bool operator!=(const Point& o) const
-    {
-        return (y != o.y || x != o.x);
-    }
-
-    bool is_positive()
-    {
-        return (y>=0 && x>=0);
-    }
-};
 
 namespace std
 {
@@ -63,80 +47,6 @@ namespace std
         }
     };
 }
-
-
-template<typename T>
-class NoddySparseGrid
-{
-private:
-    const T default_item;
-    std::vector<std::vector<T>> grid;
-    std::vector<T> dummy_row;   // used for const RowAccessors to out-of-bound rows
-
-public:
-    explicit NoddySparseGrid(const T& item = T()) : default_item(item) {}
-
-    class RowAccessor
-    {
-    private:
-        const T &default_item;
-        std::vector<T> &row;
-
-    public:
-        RowAccessor(const T &item, std::vector<T> &r) : default_item(item), row(r) {}
-        RowAccessor(const RowAccessor &) = default;
-        RowAccessor(RowAccessor &&) noexcept = default;
-
-        T &operator[](size_t i)
-        {
-            if (i >= row.size()) row.resize(i + 1, default_item);
-            return row[i];
-        }
-    };
-
-
-    class ConstRowAccessor
-    {
-    private:
-        const T &default_item;
-        const std::vector<T> &row;
-
-    public:
-        ConstRowAccessor(const T &item, const std::vector<T> &r) : default_item(item), row(r) {}
-        ConstRowAccessor(const ConstRowAccessor &) = default;
-        ConstRowAccessor(ConstRowAccessor &&) noexcept = default;
-
-        const T& operator[](size_t i) const
-        {
-            if (i>=row.size()) return default_item;
-            return row[i];
-        }
-    };
-
-
-    RowAccessor operator[](size_t i)
-    {
-        if (i>=grid.size()) grid.resize(i + 1);
-        return RowAccessor(default_item, grid[i]);
-    }
-
-    ConstRowAccessor operator[](size_t i) const
-    {
-        if (i>=grid.size()) return ConstRowAccessor(default_item, dummy_row);
-        return ConstRowAccessor(default_item, grid[i]);
-    }
-
-    T& operator[](const Point& p)
-    {
-        return (*this)[p.y][p.x];
-    }
-
-    const T& operator[](const Point& p) const
-    {
-        return (*this)[p.y][p.x];
-    }
-
-};
 
 
 bool any_neighbour_matches(char c, const NoddySparseGrid<char>& g, Point p)
