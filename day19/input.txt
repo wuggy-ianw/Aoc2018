@@ -1,0 +1,57 @@
+#ip 4
+A00 addi 4 16 4     goto A17
+
+A17 addi 3 2 3      r[3] = r[2] + 3         r3 = 2
+A18 mulr 3 3 3      r[3] = r[3] * r[3]      r3 *= r3 = 4
+A19 mulr 4 3 3      r[3] = 19 * r[3]        r3 *= 19 = 4 * 19 = 76
+A20 muli 3 11 3     r[3] = r[3] * 11        r3 *= 11 = 76 * 11 = 836
+A21 addi 1 5 1      r[1] = r[1] + 5         r1 += 5
+A22 mulr 1 4 1      r[1] = r[1] * 22        r1 *= 22
+A23 addi 1 2 1      r[1] = r[1] + 2         r1 += 2
+A24 addr 3 1 3      r[3] = r[3] + r[1]      r3 += r1
+A25 addr 4 0 4      goto A26 + r[0]         if (r[0])
+A26 seti 0 2 4      goto A01
+A27 setr 4 8 1      r[1] = 27                 r1 = 27
+A28 mulr 1 4 1      r[1] = r[1] * 28          r1 *= 28
+A29 addr 4 1 1      r[1] = 29 + r[1]          r1 += 29
+A30 mulr 4 1 1      r[1] = 30 * r[1]          r1 *= 30
+A31 muli 1 14 1     r[1] = r[1] * 14          r1 *= 14
+A32 mulr 1 4 1      r[1] = r[1] * 32          r1 *=32       .. r1 = ((27*28) + 29) * 30 * 14 * 32 = 10550400
+A33 addr 3 1 3      r[3] = r[3] + r[1]        r3 += r[1]    .. r3 += 10550400
+A34 seti 0 0 0      r[0] = 0                  r0 = 0
+A35 seti 0 2 4      goto A01
+
+if r0 is 0:
+    r0 = 0
+    r1 = (5 * 22) + 2 = 112
+    r2 = 0
+    r3 = (2 * 2 * 19 * 11) + 112 = 948
+    r4 = A01
+    r5 = 0
+if r0 is 1:
+    r0 = 0
+    r1 = ((27*28) + 29) * 30 * 14 * 32 = 10550400
+    r2 = 0
+    r3 = 1993 + 10550400 = 10551348
+    r4 = A01
+    r5 = 0
+
+                                                                            r5 = 1
+A01 seti 1 9 5      r[5] = 1                r5 = 1                          do
+A02 seti 1 5 2      r[2] = 1                r2 = 1                              r2 = 1
+A03 mulr 5 2 1      r[1] = r[5] * r[2]      r1 = r5 * r2                        do
+A04 eqrr 1 3 1      r[1] = (r[1] == r[3])   r1 = (r3 == (r5 * r2))                  if (r3 == r5 * r2)
+A05 addr 1 4 4      if (r[1]) goto A07      if (r3 == (r5 * r2))                        r0 += r5
+A06 addi 4 1 4      else goto A08
+A07 addr 5 0 0      r[0] = r[5] + r[0]        r0 += r5
+A08 addi 2 1 2      r[2] = r[2] + 1         r2 += 1                                 r2 += 1
+A09 gtrr 2 3 1      r[1] = (r[2] > r[3])    r1 = (r[2] > r[3])                  while(r2 <= r3)
+A10 addr 4 1 4      if (r[1]) goto A12
+A11 seti 2 6 4      goto A03                if (!r[1]) goto A03
+A12 addi 5 1 5      r[5] = r[5] + 1         r5 = r5 + 1                         r5 += 1
+A13 gtrr 5 3 1      r[1] = (r[5] > r[3])    r1 = (r[5] > r[3])              while(r5 <= r3)
+A14 addr 1 4 4      if (r[1]) goto A16      if (r1) HALT
+A15 seti 1 2 4      goto A01                else goto A02
+A16 mulr 4 4 4      HALT                                                    HALT
+
+

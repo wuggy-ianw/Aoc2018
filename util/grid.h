@@ -121,7 +121,7 @@ public:
 
     size_t columns() const
     {
-        return max_col;
+        return max_col + 1; // max_col is the max filled column
     }
 
 };
