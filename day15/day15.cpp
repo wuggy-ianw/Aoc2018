@@ -34,21 +34,6 @@ bool operator!=(const Point& a, const Point& o)
 }
 
 
-namespace std
-{
-    template<> struct hash<Point>
-    {
-        typedef Point argument_type;
-        typedef std::size_t result_type;
-        result_type operator()(argument_type const& p) const noexcept
-        {
-            constexpr result_type m = 24251;
-            return std::hash<int>()(p.x) + std::hash<int>()(p.y) * m;
-        }
-    };
-}
-
-
 bool any_neighbour_matches(char c, const NoddySparseGrid<char>& g, Point p)
 {
     // return true if any of the 4-neighbours of p match c

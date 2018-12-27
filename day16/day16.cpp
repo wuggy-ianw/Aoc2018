@@ -9,102 +9,33 @@
 
 #include "../util/file_parsing.h"
 
-using RegisterType = int;
 
-using Registers = std::array<RegisterType, 4>;
-using Instruction = std::array<RegisterType, 4>;
+constexpr size_t RegisterCount = 4; // must be set before the include
+#include "../util/aoc_cpu.h"
 
-using InstructionFunc = std::function<void(Registers&, RegisterType, RegisterType, RegisterType)>;
-
-template<typename OpType>
-void inst_r(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = OpType()(r[a], r[b]);
-}
-
-template<typename OpType>
-void inst_i(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = OpType()(r[a], b);
-}
-
-auto addr = inst_r<std::plus<RegisterType>>;
-auto addi = inst_i<std::plus<RegisterType>>;
-
-auto mulr = inst_r<std::multiplies<RegisterType>>;
-auto muli = inst_i<std::multiplies<RegisterType>>;
-
-auto banr = inst_r<std::bit_and<RegisterType>>;
-auto bani = inst_i<std::bit_and<RegisterType>>;
-
-auto borr = inst_r<std::bit_or<RegisterType>>;
-auto bori = inst_i<std::bit_or<RegisterType>>;
-
-void setr(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = r[a];
-}
-
-void seti(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = a;
-}
-
-
-void gtir(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (a > r[b]) ? 1 : 0;
-}
-
-void gtri(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (r[a] > b) ? 1 : 0;
-}
-
-void gtrr(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (r[a] > r[b]) ? 1 : 0;
-}
-
-
-void eqir(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (a == r[b]) ? 1 : 0;
-}
-
-void eqri(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (r[a] == b) ? 1 : 0;
-}
-
-void eqrr(Registers& r, RegisterType a, RegisterType b, RegisterType c)
-{
-    r[c] = (r[a] == r[b]) ? 1 : 0;
-}
-
-
+using Opcode = std::array<RegisterType, 4>;
 const std::array<InstructionFunc, 16> instructions
-    {
-        addr, addi,
-        mulr, muli,
-        banr, bani,
-        borr, bori,
-        setr, seti,
-        gtir, gtri, gtrr,
-        eqir, eqri, eqrr
-    };
+        {
+                addr, addi,
+                mulr, muli,
+                banr, bani,
+                borr, bori,
+                setr, seti,
+                gtir, gtri, gtrr,
+                eqir, eqri, eqrr
+        };
 
 
 struct Sample
 {
     Registers before;
-    Instruction instruction;
+    Opcode instruction;
     Registers after;
 };
 
-Instruction parse_instruction(const std::string& l)
+Opcode parse_opcode(const std::string &l)
 {
-    Instruction i;
+    Opcode i;
 
     std::stringstream ss(l);
     ss >> i[0]
@@ -136,7 +67,7 @@ std::vector<Sample> parse_samples(const std::vector<std::string>& lines)
         assert(l != lines.end());
 
 
-        sample.instruction = parse_instruction(*l++);
+        sample.instruction = parse_opcode(*l++);
         assert(l != lines.end());
 
         std::stringstream after_ss(*l++);
@@ -179,7 +110,7 @@ int day16_solve_part1(const std::vector<Sample>& samples)
     return samples_matched_3_instructions;
 }
 
-int day16_solve_part2(const std::vector<Sample>& samples, const std::vector<Instruction>& program)
+int day16_solve_part2(const std::vector<Sample>& samples, const std::vector<Opcode>& program)
 {
     // process the samples to find the matching instructions
     // can use an AND process to eliminate instructions from the set until only one remains
@@ -277,7 +208,7 @@ int main()
     auto program_lines = parse_lines(program_text);
     assert(!program_lines.empty());
 
-    auto program = convert_strings<Instruction>(program_lines, parse_instruction);
+    auto program = convert_strings<Opcode>(program_lines, parse_opcode);
     std::cout << day16_solve_part2(samples, program) << std::endl;
 
     return 0;

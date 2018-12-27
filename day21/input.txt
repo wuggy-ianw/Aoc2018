@@ -1,0 +1,52 @@
+#ip 2
+A00 seti 123 0 5        ; r5 = 123          ; do {
+A01 bani 5 456 5        ; r5 &= 456         ;
+A02 eqri 5 72 5         ; r5 = (72 == r5)   ;
+A03 addr 5 2 2          ; goto A04 + r5     ;   r5 = (123 & 456 == 72);
+A04 seti 0 0 2          ; ip = A01          ; } while (!r5);
+
+
+A05 seti 0 9 5          ; r5 = 0            ; r5 = 0;
+A06 bori 5 65536 3      ; r3 = r5 | 65536   ; do {
+                                                r3 = r5 | 65536;
+A07 seti 7586220 4 5    ; r5 = 7586220      ;   r5 = 7586220;
+A08 bani 3 255 1        ; r1 = r3 & 255     ;   do {
+                                                  r1 = r3 & 255
+A09 addr 5 1 5          ; r5 += r1          ;     r5 += r1
+A10 bani 5 16777215 5   ; r5 &= 16777215    ;     r5 &= 16777215
+A11 muli 5 65899 5      ; r5 *= 65899       ;     r5 *= 65899
+A12 bani 5 16777215 5   ; r5 &= 16777215    ;     r5 &= 16777215
+A13 gtir 256 3 1        ; r1 = (256 > r3)   ;     if (256 > r3) break - goto A28;
+A14 addr 1 2 2          ; goto A15 + r1
+A15 addi 2 1 2          ; goto A17
+A16 seti 27 9 2         ; goto A28          ;
+A17 seti 0 9 1          ; r1 = 0            ;     r1 = 0;                                        ;                   ; +1
+A18 addi 1 1 4          ; r4 = r1 + 1       ;     do {                                           ;                   ; } +7 for looping case
+A19 muli 4 256 4        ; r4 *= 256         ;       r4 = (r1 + 1) * 256                          ;                   ; } +6 for the last case
+A20 gtrr 4 3 4          ; r4 = (r4 > r3)    ;       r4 = ((r1 + 1) * 256) > r3                   ;                   ; }
+A21 addr 4 2 2          ; goto A22 + r4     ;       if (((r1 + 1) * 256) > r3) break - goto A26; ;                   ; }
+A22 addi 2 1 2          ; goto A24          ;                                                    ;                   ; }
+A23 seti 25 4 2         ; goto A26          ;                                                    ;                   ; }
+A24 addi 1 1 1          ; r1 += 1           ;       r1 += 1;                                     ;                   ; }
+A25 seti 17 2 2         ; goto A18          ;     } while(true);                                 ;                   ; }
+A26 setr 1 6 3          ; r3 = r1           ;     r3 = r1;                                       ; r3 = (r3 >> 8)    ; +1
+A27 seti 7 8 2          ; goto A08          ;   } while(true)
+A28 eqrr 5 0 1          ; r1 = (r5 == r0)   ;
+A29 addr 1 2 2          ; goto A29 + r1     ;   if (r5 == r0) HALT
+A30 seti 5 0 2          ; goto A06          ; } while(r5 != r0)
+
+15 1814
+1823 1837
+11050031
+15 1814
+1823 1837
+1859 305806
+305815 307005
+307027 693476
+693485 694997
+695019 876340
+876349 877063
+877085 1033262
+1033271 1033887
+1033909 1381025
+1381034 1382392
