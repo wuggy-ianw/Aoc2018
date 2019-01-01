@@ -137,7 +137,6 @@ namespace std
 {
     template<> struct hash<State>
     {
-        typedef Point argument_type;
         size_t operator()(const State& p) const noexcept
         {
             constexpr size_t m = 24251;
